@@ -17,14 +17,14 @@ export default function Home() {
   const [showScrollButton, setShowScrollButton] = useState(true);
   
   // Function to determine next section based on current
-  const getNextSection = (current: string): string | null => {
+  const getNextSection = (current: string) => {
     const sections = ['home', 'skills', 'experience', 'projects', 'contact'];
     const currentIndex = sections.indexOf(current);
     return sections[currentIndex + 1] || null;
   };
   
   // Scroll to section function
-  const scrollToSection = (sectionId: string): void => {
+  const scrollToSection = (sectionId: string) => {
     const section = document.getElementById(sectionId);
     if (section) {
       section.scrollIntoView({ behavior: 'smooth' });
@@ -33,7 +33,7 @@ export default function Home() {
   
   // Update current section based on scroll position
   useEffect(() => {
-    const handleScroll = (): void => {
+    const handleScroll = () => {
       const sections = ['home', 'skills', 'experience', 'projects', 'contact'];
       
       let lastSectionReached = false;
@@ -68,7 +68,7 @@ export default function Home() {
   }, []);
   
   // Navigation arrow component with proper type annotations
-  const NavigationArrow = ({ sectionId }: { sectionId: string }): JSX.Element | null => {
+  const NavigationArrow = ({ sectionId }: { sectionId: string }) => {
     const nextSection = getNextSection(sectionId);
     
     if (!nextSection || !showScrollButton) return null;
