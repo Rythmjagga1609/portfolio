@@ -13,8 +13,8 @@ import { ChevronDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Home() {
-  const [currentSection, setCurrentSection] = useState<string>('home');
-  const [showScrollButton, setShowScrollButton] = useState<boolean>(true); // New state to control button visibility
+  const [currentSection, setCurrentSection] = useState('home');
+  const [showScrollButton, setShowScrollButton] = useState(true);
   
   // Function to determine next section based on current
   const getNextSection = (current: string): string | null => {
@@ -24,7 +24,7 @@ export default function Home() {
   };
   
   // Scroll to section function
-  const scrollToSection = (sectionId: string) => {
+  const scrollToSection = (sectionId: string): void => {
     const section = document.getElementById(sectionId);
     if (section) {
       section.scrollIntoView({ behavior: 'smooth' });
@@ -33,7 +33,7 @@ export default function Home() {
   
   // Update current section based on scroll position
   useEffect(() => {
-    const handleScroll = () => {
+    const handleScroll = (): void => {
       const sections = ['home', 'skills', 'experience', 'projects', 'contact'];
       
       let lastSectionReached = false;
@@ -48,38 +48,41 @@ export default function Home() {
         
         if (topInView && bottomInView) {
           setCurrentSection(section);
-        }
-        
-        // Check if we are at the last section (contact)
-        if (section === 'contact' && rect.top <= window.innerHeight) {
-          lastSectionReached = true;
+          
+          // Check if we are at the last section (contact)
+          if (section === 'contact') {
+            lastSectionReached = true;
+          }
+          break; // Add break to prevent multiple sections being detected
         }
       }
       
-      // If last section (contact) is reached, hide the scroll button
       setShowScrollButton(!lastSectionReached);
     };
+    
+    // Call handleScroll once on component mount to set initial state
+    handleScroll();
     
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   
-  // Navigation arrow component
-  const NavigationArrow = ({ sectionId }: { sectionId: string }) => {
+  // Navigation arrow component with proper type annotations
+  const NavigationArrow = ({ sectionId }: { sectionId: string }): JSX.Element | null => {
     const nextSection = getNextSection(sectionId);
     
-    if (!nextSection || !showScrollButton) return null; // Hide button if it's the last section
+    if (!nextSection || !showScrollButton) return null;
     
     return (
       <motion.div 
-        className="absolute bottom-6 right-6 cursor-pointer z-20"
+        className="fixed bottom-6 right-6 cursor-pointer z-20"
         animate={{ y: [0, 10, 0] }}
         transition={{ repeat: Infinity, duration: 1.5 }}
         onClick={() => scrollToSection(nextSection)}
+        aria-label={`Scroll to ${nextSection} section`}
       >
         <div className="flex flex-col items-center">
-          <span className="text-xs text-muted-foreground mb-1"></span>
-          <div className="rounded-full p-1 bg-background/80 backdrop-blur-sm border border-border hover:bg-primary/10 transition-colors">
+          <div className="rounded-full p-2 bg-background/80 backdrop-blur-sm border border-border hover:bg-primary/10 transition-colors">
             <ChevronDown className="h-5 w-5" />
           </div>
         </div>
@@ -95,22 +98,18 @@ export default function Home() {
         
         <section id="home" className="min-h-[80vh] flex items-center relative px-4 sm:px-10">
           <Hero />
-          <NavigationArrow sectionId="home" />
         </section>
         
         <section id="skills" className="py-16 min-h-[80vh] flex items-center relative px-4 sm:px-10">
           <Skills />
-          <NavigationArrow sectionId="skills" />
         </section>
         
         <section id="experience" className="py-16 bg-background/50 backdrop-blur-sm min-h-[80vh] flex items-center relative px-4 sm:px-10">
           <Experience />
-          <NavigationArrow sectionId="experience" />
         </section>
         
         <section id="projects" className="py-16 min-h-[80vh] flex items-center relative px-4 sm:px-10">
           <Projects />
-          <NavigationArrow sectionId="projects" />
         </section>
         
         <section id="contact" className="py-16 bg-background/50 backdrop-blur-sm min-h-[80vh] flex items-center relative px-4 sm:px-10">
@@ -119,6 +118,7 @@ export default function Home() {
         
         <Footer />
       </div>
+      <NavigationArrow sectionId={currentSection} />
     </main>
   );
 }
