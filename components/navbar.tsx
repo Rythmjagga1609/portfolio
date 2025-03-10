@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from 'next-themes';
 import { Moon, Sun } from 'lucide-react';
 
+// Links for the navigation
 const navLinks = [
   { name: 'Home', href: '#home', icon: Home },
   { name: 'Skills', href: '#skills', icon: Code },
@@ -22,13 +23,13 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const { theme, setTheme } = useTheme();
-  const headerRef = useRef(null);
+  const headerRef = useRef<HTMLElement | null>(null); // Type headerRef as HTMLElement or null
 
+  // Throttled scroll event listener to check active section
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
-      
-      // Find the current active section based on scroll position
+
       const sections = navLinks.map(link => link.href.substring(1));
       const currentSection = sections.find(section => {
         const element = document.getElementById(section);
@@ -38,26 +39,30 @@ export default function Navbar() {
         }
         return false;
       });
-      
+
       if (currentSection) {
         setActiveSection(currentSection);
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const debouncedHandleScroll = () => {
+      handleScroll();
+    };
+
+    window.addEventListener('scroll', debouncedHandleScroll);
+    return () => window.removeEventListener('scroll', debouncedHandleScroll);
   }, []);
 
   // Handle clicks outside to close mobile menu
   useEffect(() => {
     if (!mobileMenuOpen) return;
-    
-    const handleClickOutside = (event) => {
-      if (headerRef.current && !headerRef.current.contains(event.target)) {
+
+    const handleClickOutside = (event: MouseEvent) => {  // Type the event as MouseEvent
+      if (headerRef.current && !headerRef.current.contains(event.target as Node)) { // Type event.target as Node
         setMobileMenuOpen(false);
       }
     };
-    
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [mobileMenuOpen]);
@@ -69,33 +74,25 @@ export default function Navbar() {
         setMobileMenuOpen(false);
       }
     };
-    
+
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Animation variants
+  // Animation variants for mobile menu and links
   const mobileMenuVariants = {
-    closed: {
-      opacity: 0,
-      height: 0,
-      transition: { duration: 0.3, ease: "easeInOut" }
-    },
-    open: {
-      opacity: 1,
-      height: 'auto',
-      transition: { duration: 0.3, ease: "easeInOut" }
-    }
+    closed: { opacity: 0, height: 0, transition: { duration: 0.3, ease: "easeInOut" } },
+    open: { opacity: 1, height: 'auto', transition: { duration: 0.3, ease: "easeInOut" } },
   };
 
   const linkVariants = {
     initial: { x: -20, opacity: 0 },
-    animate: i => ({
+    animate: (i: number) => ({
       x: 0,
       opacity: 1,
       transition: { delay: i * 0.1, duration: 0.3 }
     }),
-    exit: i => ({
+    exit: (i: number) => ({
       x: -20,
       opacity: 0,
       transition: { delay: i * 0.05, duration: 0.2 }
@@ -156,6 +153,8 @@ export default function Navbar() {
               </Link>
             </motion.div>
           ))}
+
+          {/* Theme Toggle Button */}
           <motion.div
             whileHover={{ rotate: 15 }}
             whileTap={{ scale: 0.9 }}
@@ -190,6 +189,8 @@ export default function Navbar() {
               <span className="sr-only">Toggle theme</span>
             </Button>
           </motion.div>
+
+          {/* Menu Icon */}
           <motion.div
             whileTap={{ scale: 0.9 }}
             animate={mobileMenuOpen ? "open" : "closed"}
