@@ -17,14 +17,14 @@ export default function Home() {
   const [showScrollButton, setShowScrollButton] = useState(true); // New state to control button visibility
   
   // Function to determine next section based on current
-  const getNextSection = (current) => {
+  const getNextSection = (current: string) => {
     const sections = ['home', 'skills', 'experience', 'projects', 'contact'];
     const currentIndex = sections.indexOf(current);
     return sections[currentIndex + 1] || null;
   };
   
   // Scroll to section function
-  const scrollToSection = (sectionId) => {
+  const scrollToSection = (sectionId: string) => {
     const section = document.getElementById(sectionId);
     if (section) {
       section.scrollIntoView({ behavior: 'smooth' });
@@ -65,7 +65,11 @@ export default function Home() {
   }, []);
   
   // Navigation arrow component
-  const NavigationArrow = ({ sectionId }) => {
+  interface NavigationArrowProps {
+    sectionId: string; // Explicitly define sectionId prop type as string
+  }
+
+  const NavigationArrow: React.FC<NavigationArrowProps> = ({ sectionId }) => {
     const nextSection = getNextSection(sectionId);
     
     if (!nextSection || !showScrollButton) return null; // Hide button if it's the last section
