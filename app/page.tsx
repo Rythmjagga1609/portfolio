@@ -14,7 +14,7 @@ import { motion } from 'framer-motion';
 
 export default function Home() {
   const [currentSection, setCurrentSection] = useState('home');
-  const [showScrollButton, setShowScrollButton] = useState(true);
+  const [showScrollButton, setShowScrollButton] = useState(true); // New state to control button visibility
   
   // Function to determine next section based on current
   const getNextSection = (current: string) => {
@@ -53,25 +53,26 @@ export default function Home() {
           if (section === 'contact') {
             lastSectionReached = true;
           }
-          break; // Add break to prevent multiple sections being detected
+          break;
         }
       }
       
+      // If last section (contact) is reached, hide the scroll button
       setShowScrollButton(!lastSectionReached);
     };
     
-    // Call handleScroll once on component mount to set initial state
+    // Initialize on mount
     handleScroll();
     
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   
-  // Navigation arrow component with proper type annotations
+  // Navigation arrow component
   const NavigationArrow = ({ sectionId }: { sectionId: string }) => {
     const nextSection = getNextSection(sectionId);
     
-    if (!nextSection || !showScrollButton) return null;
+    if (!nextSection || !showScrollButton) return null; // Hide button if it's the last section
     
     return (
       <motion.div 
@@ -82,7 +83,8 @@ export default function Home() {
         aria-label={`Scroll to ${nextSection} section`}
       >
         <div className="flex flex-col items-center">
-          <div className="rounded-full p-2 bg-background/80 backdrop-blur-sm border border-border hover:bg-primary/10 transition-colors">
+          <span className="text-xs text-muted-foreground mb-1"></span>
+          <div className="rounded-full p-1 bg-background/80 backdrop-blur-sm border border-border hover:bg-primary/10 transition-colors">
             <ChevronDown className="h-5 w-5" />
           </div>
         </div>
