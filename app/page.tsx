@@ -13,11 +13,11 @@ import { ChevronDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Home() {
-  const [currentSection, setCurrentSection] = useState('home');
-  const [showScrollButton, setShowScrollButton] = useState(true); // New state to control button visibility
+  const [currentSection, setCurrentSection] = useState<string>('home');
+  const [showScrollButton, setShowScrollButton] = useState<boolean>(true); // New state to control button visibility
   
   // Function to determine next section based on current
-  const getNextSection = (current: string) => {
+  const getNextSection = (current: string): string | null => {
     const sections = ['home', 'skills', 'experience', 'projects', 'contact'];
     const currentIndex = sections.indexOf(current);
     return sections[currentIndex + 1] || null;
@@ -65,11 +65,7 @@ export default function Home() {
   }, []);
   
   // Navigation arrow component
-  interface NavigationArrowProps {
-    sectionId: string; // Explicitly define sectionId prop type as string
-  }
-
-  const NavigationArrow: React.FC<NavigationArrowProps> = ({ sectionId }) => {
+  const NavigationArrow = ({ sectionId }: { sectionId: string }) => {
     const nextSection = getNextSection(sectionId);
     
     if (!nextSection || !showScrollButton) return null; // Hide button if it's the last section
